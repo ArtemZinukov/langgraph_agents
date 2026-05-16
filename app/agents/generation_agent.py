@@ -12,6 +12,9 @@ async def node_draft(state: SupportState, t_logger: TicketLoggerAdapter) -> dict
     t_logger.info(f"Запуск генерации черновика ответа (Итерация ревизии: {current_retry})")
 
     draft = await generate_draft_llm(
-        query=state.get("query", ""), docs=state.get("documents", []), feedback=state.get("qa_feedback", "")
+        query=state.get("query", ""),
+        docs=state.get("documents", []),
+        feedback=state.get("qa_feedback", ""),
+        t_logger=t_logger,
     )
     return {"draft": draft}

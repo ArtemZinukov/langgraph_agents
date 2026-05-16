@@ -10,7 +10,7 @@ from app.services.llm_service import extract_intent_llm
 async def node_extract(state: SupportState, t_logger: TicketLoggerAdapter) -> dict[str, Any]:
     t_logger.info(f"Анализ входящего обращения: '{state.get('query')}'")
 
-    result = await extract_intent_llm(state.get("query", ""))
+    result = await extract_intent_llm(state.get("query", ""), t_logger=t_logger)
 
     t_logger.info(f"Успешно извлечено намерение: {result.intent}")
 
