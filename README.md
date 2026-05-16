@@ -98,7 +98,7 @@ pip install -r requirements.txt
 
 ### 2. Запуск проекта
 
-```
+```bash
 python main.py
 ```
 
