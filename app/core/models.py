@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Literal, Optional, TypedDict
+from typing import Annotated, Any, Dict, List, Literal, Optional, TypedDict
 
 from pydantic import BaseModel, Field
 
@@ -9,9 +9,11 @@ class ExtractionResult(BaseModel):
     intent: Literal["question", "complaint", "assistance"] = Field(
         description="Основное намерение пользователя в обращении"
     )
-    entities: dict[str, Any] = Field(
-        default_factory=dict, description="Извлеченные именованные сущности (продукт, версия, симптомы и т.д.)"
-    )
+
+    entities: Annotated[
+        dict[str, Any],
+        Field(default_factory=dict, description="Извлеченные именованные сущности (продукт, версия, симптомы и т.д.)"),
+    ]
 
 
 class QAResult(BaseModel):
