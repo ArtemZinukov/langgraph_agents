@@ -18,5 +18,5 @@ repos:
     rev: v1.10.0
     hooks:
       - id: mypy
-        additional_dependencies: [pydantic>=2.0.0, pydantic-settings]
+        additional_dependencies: [pydantic>=2.0.0, pydantic-settings, pytest]
         args: [--config-file=pyproject.toml]
