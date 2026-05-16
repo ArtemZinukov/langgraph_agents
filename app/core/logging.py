@@ -15,7 +15,6 @@ def get_logger(name: str = "MAS_Support") -> logging.Logger:
 
 class TicketLoggerAdapter(logging.LoggerAdapter[logging.Logger]):
     def process(self, msg: Any, kwargs: MutableMapping[str, Any]) -> tuple[Any, MutableMapping[str, Any]]:
-        # Безопасно извлекаем extra из self.extra (который в LoggerAdapter является Mapping[str, Any] | None)
         extra_dict = self.extra if self.extra is not None else {}
         ticket_id = extra_dict.get("ticket_id", "UNKNOWN")
 
