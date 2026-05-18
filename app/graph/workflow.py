@@ -6,19 +6,22 @@ from app.agents.intent_agent import node_extract
 from app.agents.knowledge_agent import node_search_kb
 from app.agents.qa_agent import node_qa
 from app.core.config import settings
-from app.core.models import SupportState
+from app.core.models import SupportState, TicketIntent
 
 
-# Условный роутер после этапа извлечения интента
 def route_extraction(state: SupportState) -> str:
     if state.get("error"):
         return "fallback"
-    if state.get("intent") == "complaint":
-        return "escalate"
-    return "search_kb"
+
+    match state.get("intent"):
+        case TicketIntent.COMPLAINT:
+            return "escalate"
+        case TicketIntent.QUESTION | TicketIntent.ASSISTANCE:
+            return "search_kb"
+        case _:
+            return "fallback"
 
 
-# Условный роутер после этапа QA проверки
 def route_qa(state: SupportState) -> str:
     if state.get("error"):
         return "fallback"

@@ -3,7 +3,7 @@ from unittest.mock import AsyncMock, patch
 import pytest
 
 from app.core.exceptions import ServiceError
-from app.core.models import SupportState
+from app.core.models import SupportState, TicketIntent
 from app.graph.workflow import app_graph, route_extraction, route_qa
 
 
@@ -30,16 +30,16 @@ async def test_pipeline_escalation_branch(mock_extract: AsyncMock) -> None:
     Проверяет, что при интенте 'complaint' граф успешно доходит до конца,
     сохраняя интент жалобы.
     """
-    mock_extract.return_value = AsyncMock(intent="complaint", entities=[])
+    mock_extract.return_value = AsyncMock(intent=TicketIntent.COMPLAINT, entities=[])
 
     final_state = await app_graph.ainvoke({"query": "Верните деньги, ваш сервис ужасен!"})
 
-    assert final_state["intent"] == "complaint"
+    assert final_state["intent"] == TicketIntent.COMPLAINT
 
 
 def test_route_extraction_complaint(base_state: SupportState) -> None:
-    """Дополнительный Unit-тест роутера extraction на жалобу."""
-    base_state["intent"] = "complaint"
+    """Unit-тест роутера extraction на жалобу."""
+    base_state["intent"] = TicketIntent.COMPLAINT
     assert route_extraction(base_state) == "escalate"
 
 
@@ -59,12 +59,9 @@ async def test_pipeline_revision_loop_and_limit(
     Проверяет, что при плохой оценке QA граф возвращается к генерации черновика,
     но останавливается ровно после MAX_REVISION_ITERATIONS (2).
     """
-
-    mock_extract.return_value = AsyncMock(intent="question", entities=[])
+    mock_extract.return_value = AsyncMock(intent=TicketIntent.QUESTION, entities=[])
     mock_node_search_kb.return_value = {"documents": ["Инструкция..."]}
-
     mock_generate_draft_llm.return_value = "Черновик ответа"
-
     mock_evaluate_qa_llm.return_value = AsyncMock(score=0.4, feedback="Плохо")
 
     final_state = await app_graph.ainvoke({"query": "Как настроить систему?", "retry_count": 0})

@@ -1,6 +1,13 @@
+from enum import Enum
 from typing import Annotated, Any, Dict, List, Literal, Optional, TypedDict
 
 from pydantic import BaseModel, Field
+
+
+class TicketIntent(str, Enum):
+    QUESTION = "question"
+    COMPLAINT = "complaint"
+    ASSISTANCE = "assistance"
 
 
 class ExtractionResult(BaseModel):
@@ -35,7 +42,7 @@ class SupportState(TypedDict, total=False):
     query: str
 
     # Контекст, наполняемый агентами в процессе работы
-    intent: Optional[Literal["question", "complaint", "assistance"]]
+    intent: TicketIntent | None
     entities: Dict[str, Any]
     documents: List[str]
     draft: str
